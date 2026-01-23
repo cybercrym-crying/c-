@@ -1,0 +1,5 @@
+Pizza 10000
+Steak 20000
+Hotdog 7000
+Cereal 5000
+Seafood 7000
