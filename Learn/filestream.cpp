@@ -20,5 +20,6 @@ int main() {
 
   remove("data.txt");
   rename("temp.txt", "data.txt");
+
   return 0;
 }
