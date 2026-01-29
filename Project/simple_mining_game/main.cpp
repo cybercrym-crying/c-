@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
@@ -52,12 +53,7 @@ public:
     metalRarity = rarity;
     metalHardness = hardness;
   }
-  void displayInfo() {
-    cout << "Metal Name     \t: " << metalName << endl;
-    cout << "Metal Price    \t: " << metalPrice << endl;
-    cout << "Metal Rarity   \t: " << metalRarity << endl;
-    cout << "Metal Hardness \t: " << metalHardness << endl;
-  }
+  void displayInfo();
 
   void miningProcess() {}
   int getRarity() { return metalRarity; }
@@ -73,7 +69,7 @@ private:
 
 public:
 };
-
+void getMetalList(vector<MetalType> &metal);
 int main() {
   random_device rd;
   mt19937 gen(rd());
@@ -83,13 +79,7 @@ int main() {
   string inputName, inputUser = "y";
   int defaultLevel = 1, defaultMana = 10, defaultLucky = 5, defaultStrenght = 2,
       rarityResult, raritySearch;
-  metals.emplace_back("Copper", 1000, COMMON, 35);
-  metals.emplace_back("Ore", 1200, COMMON, 38);
-  metals.emplace_back("Iron", 1500, UNCOMMON, 44);
-  metals.emplace_back("Gold", 2800, RARE, 55);
-  metals.emplace_back("Diamond", 5600, EPIC, 79);
-  metals.emplace_back("Mithril", 10000, LEGENDARY, 100);
-
+  getMetalList(metals);
   while (inputUser == "y") {
     cout << "Menambang..." << endl;
     this_thread::sleep_for(chrono::seconds(5));
@@ -125,4 +115,36 @@ int main() {
     cin >> inputUser;
   }
   return 0;
+}
+void MetalType::displayInfo() {
+  cout << "Metal Name     \t: " << metalName << endl;
+  cout << "Metal Price    \t: " << metalPrice << endl;
+  cout << "Metal Rarity   \t: " << metalRarity << endl;
+  cout << "Metal Hardness \t: " << metalHardness << endl;
+}
+
+void getMetalList(vector<MetalType> &metal) {
+  string name, rarityBuffer;
+  int price, hardness, rarity;
+
+  ifstream file("metal_list.txt");
+  if (file.is_open()) {
+    while (file >> name >> price >> rarityBuffer >> hardness) {
+      if (rarityBuffer == "COMMON") {
+        rarity = COMMON;
+      } else if (rarityBuffer == "UNCOMMON") {
+        rarity = UNCOMMON;
+      } else if (rarityBuffer == "RARE") {
+        rarity = RARE;
+      } else if (rarityBuffer == "EPIC") {
+        rarity == EPIC;
+      } else {
+        rarity = LEGENDARY;
+      }
+      metal.emplace_back(name, price, rarity, hardness);
+    }
+    file.close();
+  } else {
+    cout << "Failed To Open File" << endl;
+  }
 }
