@@ -15,6 +15,9 @@ class Item {
 public:
   string itemName;
   Item(string name) : itemName(name) {}
+  virtual void displayInfoObject() {
+    cout << "Name    \t: " << itemName << endl;
+  }
 };
 
 class Material : public Item {
@@ -33,6 +36,11 @@ private:
 public:
   WorldObject(string name, int dura, int sr)
       : Item(name), durability(dura), spawnRate(sr) {}
+  void displayInfoObject() override {
+    Item::displayInfoObject();
+    cout << "Durability    \t: " << durability << endl;
+    cout << "Rarity    \t: " << spawnRate << endl;
+  }
 };
 
 class Tools : public Item {
@@ -55,14 +63,15 @@ public:
   Character(string name, Tools *t) : charName(name), tool(t) {}
   void useTool() { cout << "Using " << tool->itemName << endl; }
 };
+void addingMetalList(vector<WorldObject> &metal);
 
 int main() {
   vector<WorldObject> metalBlock;
   Tools *ironPickaxe = new Tools("Iron Pickaxe", 50);
-
   Character player("Eliced Star", ironPickaxe);
   player.useTool();
-
+  addingMetalList(metalBlock);
+  metalBlock[0].displayInfoObject();
   return 0;
 }
 
