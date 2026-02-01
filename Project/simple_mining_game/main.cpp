@@ -3,6 +3,13 @@
 #include <string>
 #include <vector>
 using namespace std;
+enum spawnRateMetal {
+  COMMON = 60,
+  UNCOMMON = 30,
+  RARE = 5,
+  EPIC = 3,
+  LEGENDARY = 2
+};
 
 class Item {
 public:
@@ -21,9 +28,11 @@ public:
 class WorldObject : public Item {
 private:
   int durability;
+  int spawnRate;
 
 public:
-  WorldObject(string name, int dura) : Item(name), durability(dura) {}
+  WorldObject(string name, int dura, int sr)
+      : Item(name), durability(dura), spawnRate(sr) {}
 };
 
 class Tools : public Item {
@@ -57,7 +66,7 @@ int main() {
   return 0;
 }
 
-void addingMetalList(vector<WorldObject> *metal) {
+void addingMetalList(vector<WorldObject> &metal) {
   string name, bufferSR;
   int dura, spawnRate;
   ifstream fileMetal("metal_list.txt");
@@ -72,8 +81,9 @@ void addingMetalList(vector<WorldObject> *metal) {
       } else if (bufferSR == "EPIC") {
         spawnRate = EPIC;
       } else {
-        spawnRate == LEGENDARY
+        spawnRate = LEGENDARY;
       }
+      metal.emplace_back(name, dura, spawnRate);
     }
     fileMetal.close();
   }
