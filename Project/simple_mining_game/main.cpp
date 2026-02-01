@@ -16,10 +16,7 @@ private:
 public:
   Material(string name, int max) : Item(name), mountMax(max) {}
 };
-
-class
-
-    class Tools : public Item {
+class Tools : public Item {
 private:
   int duraMax;
   int stackMax = 1;
