@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 using namespace std;
@@ -41,6 +42,8 @@ public:
     cout << "Durability    \t: " << durability << endl;
     cout << "Rarity    \t: " << spawnRate << endl;
   }
+
+  int displayRarityObject() { return spawnRate; }
 };
 
 class Tools : public Item {
@@ -64,14 +67,14 @@ public:
   void useTool() { cout << "Using " << tool->itemName << endl; }
 };
 void addingMetalList(vector<WorldObject> &metal);
-
+void spawnRateMetal(vector<WorldObject> &metal);
 int main() {
   vector<WorldObject> metalBlock;
   Tools *ironPickaxe = new Tools("Iron Pickaxe", 50);
   Character player("Eliced Star", ironPickaxe);
   player.useTool();
   addingMetalList(metalBlock);
-  metalBlock[0].displayInfoObject();
+  spawnRateMetal(metalBlock);
   return 0;
 }
 
@@ -96,4 +99,39 @@ void addingMetalList(vector<WorldObject> &metal) {
     }
     fileMetal.close();
   }
+}
+
+void spawnRateMetal(vector<WorldObject> &metal) {
+  vector<WorldObject> metalResult;
+  random_device rd;
+  mt19937 gen(rd());
+  discrete_distribution<> dist({COMMON, UNCOMMON, RARE, EPIC, LEGENDARY});
+  int resultIndexRarity = dist(gen), rarity;
+
+  switch (resultIndexRarity) {
+  case 0:
+    rarity = COMMON;
+    break;
+  case 1:
+    rarity = UNCOMMON;
+    break;
+  case 2:
+    rarity = RARE;
+    break;
+  case 3:
+    rarity = EPIC;
+    break;
+  case 4:
+
+    rarity = LEGENDARY;
+    break;
+  }
+
+  for (auto &item : metal) {
+    if (item.displayRarityObject() == rarity) {
+      metalResult.emplace_back(item);
+    }
+  }
+  uniform_int_distribution<int> subDist(0, metalResult.size() - 1);
+  metalResult[subDist(gen)].displayInfoObject();
 }
