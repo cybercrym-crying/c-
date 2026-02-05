@@ -2,21 +2,20 @@ Scrap 100 COMMON
 Copper 250 COMMON 
 Tin 200 COMMON 
 Zinc 220 COMMON 
-Lead 150 COMMON 
+Lead 150 COMMON
+
 Iron 500 UNCOMMON 
 Silver 400 UNCOMMON 
 Nickel 450 UNCOMMON 
 Bronze 600 UNCOMMON 
-Brass 550 UNCOMMON 
-Steel 1200 RARE 
-Gold 300 RARE 
+Brass 550 UNCOMMON  
+Gold 1300 RARE
 Platinum 800 RARE 
 Cobalt 1500 RARE 
 Palladium 1100 RARE 
 Titanium 2500 EPIC 
 Mithril 4000 EPIC 
 Orichalcum 3500 EPIC 
-Tungsten 3000 EPIC 
 Obsidian 5000 EPIC 
 Adamantite 7500 LEGENDARY 
 Neutronium 15000 LEGENDARY

@@ -23,10 +23,10 @@ public:
 
 class Material : public Item {
 private:
-  int mountMax = 99;
+  int stackMax = 99;
 
 public:
-  Material(string name, int max) : Item(name), mountMax(max) {}
+  Material(string name, int max) : Item(name), stackMax(max) {}
 };
 
 class WorldObject : public Item {
@@ -46,6 +46,14 @@ public:
   int displayRarityObject() { return spawnRate; }
 };
 
+class Bag : public Item {
+private:
+  int slotBag;
+
+public:
+  Bag(string name, int slot) : Item(name), slotBag(slot) {}
+};
+
 class Tools : public Item {
 private:
   int durability;
@@ -61,17 +69,21 @@ private:
   int charEnergy = 10;
   int charLevel = 1;
   Tools *tool;
+  Bag *bag;
 
 public:
-  Character(string name, Tools *t) : charName(name), tool(t) {}
+  Character(string name, Tools *t, Bag *b) : charName(name), tool(t), bag(b) {}
   void useTool() { cout << "Using " << tool->itemName << endl; }
 };
+
 void addingMetalList(vector<WorldObject> &metal);
 void spawnRateMetal(vector<WorldObject> &metal);
+
 int main() {
   vector<WorldObject> metalBlock;
   Tools *ironPickaxe = new Tools("Iron Pickaxe", 50);
-  Character player("Eliced Star", ironPickaxe);
+  Bag *playerBag = new Bag("Basic Bag", 10);
+  Character player("Eliced Star", ironPickaxe, playerBag);
   player.useTool();
   addingMetalList(metalBlock);
   spawnRateMetal(metalBlock);
