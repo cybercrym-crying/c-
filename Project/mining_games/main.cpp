@@ -27,7 +27,7 @@ class Metal : public Item {
 public:
   Metal(string n, int h, int r, int p)
       : Item(n), metalHardness(h), metalRarity(r), metalPrice(p) {}
-
+  int getRarity() const { return metalRarity; }
   void displayMetalInfo();
 };
 
@@ -71,7 +71,39 @@ void addMetalFromFile(vector<Metal> &metal) {
     cout << "Failed to load Metal" << endl;
   }
 }
+void miningProcess(vector<Metal> &metal) {
+  random_device rd;
+  mt19937 gen(rd());
+  discrete_distribution<> dist{COMMON, UNCOMMON, RARE, EPIC, LEGENDARY};
+  vector<Metal> metalListRarity;
+  int rarityMetal;
+  int randomResult = dist(gen);
 
+  switch (randomResult) {
+  case 0:
+    rarityMetal = COMMON;
+    break;
+  case 1:
+    rarityMetal = UNCOMMON;
+    break;
+  case 2:
+    rarityMetal = RARE;
+    break;
+  case 3:
+    rarityMetal = EPIC;
+    break;
+  case 4:
+    rarityMetal = LEGENDARY;
+    break;
+  }
+  for (auto const &m : metal) {
+    if (m.getRarity() == rarityMetal) {
+      metalListRarity.emplace_back(m);
+    }
+  }
+  uniform_int_distribution<> uni(0, metalListRarity.size() - 1);
+  randomResult = uni(gen);
+}
 void Metal::displayMetalInfo() {
   cout << "Metal Name   : " << getName() << endl;
   cout << "Metal Rarity : " << metalRarity << endl;
