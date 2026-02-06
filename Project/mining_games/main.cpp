@@ -65,11 +65,25 @@ void miningProcess(vector<Metal> &metal, Bag &playerBag);
 
 int main() {
   vector<Metal> metal;
+  addMetalFromFile(metal);
+  string playerInput;
   Bag playerBag;
   Player player1("Akbar");
-  addMetalFromFile(metal);
-  miningProcess(metal, playerBag);
-  playerBag.displayBagContent();
+  while (true) {
+    cout << "1. Mining" << endl;
+    cout << "2. Bag" << endl;
+    cout << "Input Menu : ";
+    cin >> playerInput;
+    cout << endl;
+    if (playerInput == "1") {
+      miningProcess(metal, playerBag);
+    } else if (playerInput == "2") {
+      playerBag.displayBagContent();
+    } else {
+      cout << "Not In Option" << endl;
+      continue;
+    }
+  }
   return 0;
 }
 
@@ -99,6 +113,7 @@ void addMetalFromFile(vector<Metal> &metal) {
   }
 }
 void miningProcess(vector<Metal> &metal, Bag &playerBag) {
+  this_thread::sleep_for(chrono::seconds(5));
   random_device rd;
   mt19937 gen(rd());
   discrete_distribution<> dist{COMMON, UNCOMMON, RARE, EPIC, LEGENDARY};
