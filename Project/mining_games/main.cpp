@@ -41,32 +41,15 @@ class Bag {
 public:
   Item *itemExist(string name) {
     for (auto const &item : bag) {
-      if (item->getName() == name &&
-          item->getItemStack() != item->getStackMax()) {
+      if (item->getName() == name) {
         return item.get();
       }
-      return nullptr;
     }
     return nullptr;
   }
 
-  void addItem(string name, int amount) {
-    while (true) {
-      Item *item = itemExist(name);
-      int stackReady = item->getStackMax() - item->getItemStack();
-      if (item == nullptr) {
-        continue;
-      } else if (amount > stackReady) {
-        item->addStack(stackReady);
-        amount -= stackReady;
-        continue;
-      } else {
-        item->addStack(amount);
-        break;
-      }
-      break;
-    }
-  }
+  void addItem(Metal &metal, int amount);
+  void displayBagContent();
 };
 
 class Player {
@@ -79,12 +62,14 @@ public:
 
 void addMetalFromFile(vector<Metal> &metal);
 void miningProcess(vector<Metal> &metal, Bag &playerBag);
+
 int main() {
   vector<Metal> metal;
   Bag playerBag;
   Player player1("Akbar");
   addMetalFromFile(metal);
   miningProcess(metal, playerBag);
+  playerBag.displayBagContent();
   return 0;
 }
 
@@ -144,16 +129,48 @@ void miningProcess(vector<Metal> &metal, Bag &playerBag) {
     }
   }
   uniform_int_distribution<> uni(0, metalListRarity.size() - 1);
-  discrete_distribution<> randomAmount{1, 2, 3};
+  uniform_int_distribution<> randomAmount{1, 3};
   randomResult = uni(gen);
   int randomResultAmount = randomAmount(gen);
   metalListRarity[randomResult].displayMetalInfo();
-  cout << "Metal Amount : " << randomResultAmount << endl;
-  playerBag.addItem(metalListRarity[randomResult].getName(),
-                    randomResultAmount);
+  cout << "Metal Amount : " << randomResultAmount << endl << endl;
+  playerBag.addItem(metalListRarity[randomResult], randomResultAmount);
 }
 void Metal::displayMetalInfo() {
   cout << "Metal Name   : " << getName() << endl;
   cout << "Metal Rarity : " << metalRarity << endl;
   cout << "Metal Price  : " << metalPrice << endl;
+}
+
+void Bag::addItem(Metal &metal, int amount) {
+  while (true) {
+    Item *item = itemExist(metal.getName());
+
+    if (item == nullptr) {
+      bag.emplace_back(make_unique<Metal>(metal));
+      continue;
+    }
+    int spaceBag = item->getStackMax() - item->getItemStack();
+
+    if (amount > spaceBag) {
+      item->addStack(spaceBag);
+      amount -= spaceBag;
+      continue;
+    } else {
+      item->addStack(amount);
+      break;
+    }
+    break;
+  }
+}
+
+void Bag::displayBagContent() {
+  if (bag.empty()) {
+    cout << "No Item In bag" << endl;
+  } else {
+    for (auto const &item : bag) {
+      cout << "Item Name : " << item->getName() << endl;
+      cout << "Item Stack : " << item->getItemStack() << endl << endl;
+    }
+  }
 }
