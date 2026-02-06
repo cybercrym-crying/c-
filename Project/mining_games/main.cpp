@@ -13,10 +13,14 @@ enum Rarity { COMMON = 60, UNCOMMON = 30, RARE = 6, EPIC = 3, LEGENDARY = 1 };
 class Item {
   string itemName;
   int stackMax = 99;
+  int itemStack = 0;
 
 public:
   Item(string n) : itemName(n) {}
   string getName() const { return itemName; }
+  int getStackMax() const { return stackMax; }
+  int getItemStack() const { return itemStack; }
+  void addStack(int amount) { itemStack += amount; }
 };
 
 class Metal : public Item {
@@ -31,6 +35,40 @@ public:
   void displayMetalInfo();
 };
 
+class Bag {
+  vector<unique_ptr<Item>> bag;
+
+public:
+  Item *itemExist(string name) {
+    for (auto const &item : bag) {
+      if (item->getName() == name &&
+          item->getItemStack() != item->getStackMax()) {
+        return item.get();
+      }
+      return nullptr;
+    }
+    return nullptr;
+  }
+
+  void addItem(string name, int amount) {
+    while (true) {
+      Item *item = itemExist(name);
+      int stackReady = item->getStackMax() - item->getItemStack();
+      if (item == nullptr) {
+        continue;
+      } else if (amount > stackReady) {
+        item->addStack(stackReady);
+        amount -= stackReady;
+        continue;
+      } else {
+        item->addStack(amount);
+        break;
+      }
+      break;
+    }
+  }
+};
+
 class Player {
   string playerName;
   int playerEnergy = 10;
@@ -39,10 +77,14 @@ public:
   Player(string n) : playerName(n) {}
 };
 
+void addMetalFromFile(vector<Metal> &metal);
+void miningProcess(vector<Metal> &metal, Bag &playerBag);
 int main() {
   vector<Metal> metal;
+  Bag playerBag;
   Player player1("Akbar");
-
+  addMetalFromFile(metal);
+  miningProcess(metal, playerBag);
   return 0;
 }
 
@@ -71,7 +113,7 @@ void addMetalFromFile(vector<Metal> &metal) {
     cout << "Failed to load Metal" << endl;
   }
 }
-void miningProcess(vector<Metal> &metal) {
+void miningProcess(vector<Metal> &metal, Bag &playerBag) {
   random_device rd;
   mt19937 gen(rd());
   discrete_distribution<> dist{COMMON, UNCOMMON, RARE, EPIC, LEGENDARY};
@@ -102,7 +144,13 @@ void miningProcess(vector<Metal> &metal) {
     }
   }
   uniform_int_distribution<> uni(0, metalListRarity.size() - 1);
+  discrete_distribution<> randomAmount{1, 2, 3};
   randomResult = uni(gen);
+  int randomResultAmount = randomAmount(gen);
+  metalListRarity[randomResult].displayMetalInfo();
+  cout << "Metal Amount : " << randomResultAmount << endl;
+  playerBag.addItem(metalListRarity[randomResult].getName(),
+                    randomResultAmount);
 }
 void Metal::displayMetalInfo() {
   cout << "Metal Name   : " << getName() << endl;
