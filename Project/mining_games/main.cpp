@@ -32,7 +32,16 @@ public:
   Metal(string n, int h, int r, int p)
       : Item(n), metalHardness(h), metalRarity(r), metalPrice(p) {}
   int getRarity() const { return metalRarity; }
+  int getHardness() const { return metalHardness; }
   void displayMetalInfo();
+};
+
+class Tools : public Metal {
+  int toolDura = 0;
+
+public:
+  int getDura() const { return toolDura; }
+  void setDura(int metalHardness) { toolDura = metalHardness; }
 };
 
 class Bag {
@@ -55,9 +64,25 @@ public:
 class Player {
   string playerName;
   int playerEnergy = 10;
+  unique_ptr<Tools> pickaxe;
+  unique_ptr<Bag> bag;
 
 public:
   Player(string n) : playerName(n) {}
+  void setBag(unique_ptr<Bag> newBag) { bag = std::move(newBag); }
+  Bag *getBag() { return bag.get(); }
+  void setTool(unique_ptr<Tools> newPickaxe) {
+    pickaxe = std::move(newPickaxe);
+  }
+  Tools *getPickaxe() { return pickaxe.get(); }
+  void usePickaxe() {
+    if (playerEnergy == 0) {
+      cout << "You Dying" << endl;
+    } else {
+      playerEnergy--;
+    }
+  }
+  void craftPickaxe(Metal &metal) { pickaxe->setDura(metal.getHardness()); }
 };
 
 void addMetalFromFile(vector<Metal> &metal);
@@ -67,8 +92,8 @@ int main() {
   vector<Metal> metal;
   addMetalFromFile(metal);
   string playerInput;
-  Bag playerBag;
   Player player1("Akbar");
+  player1.setBag(make_unique<Bag>());
   while (true) {
     cout << "1. Mining" << endl;
     cout << "2. Bag" << endl;
@@ -76,9 +101,9 @@ int main() {
     cin >> playerInput;
     cout << endl;
     if (playerInput == "1") {
-      miningProcess(metal, playerBag);
+      miningProcess(metal, *player1.getBag());
     } else if (playerInput == "2") {
-      playerBag.displayBagContent();
+      player1.getBag()->displayBagContent();
     } else {
       cout << "Not In Option" << endl;
       continue;
@@ -113,7 +138,7 @@ void addMetalFromFile(vector<Metal> &metal) {
   }
 }
 void miningProcess(vector<Metal> &metal, Bag &playerBag) {
-  this_thread::sleep_for(chrono::seconds(5));
+  this_thread::sleep_for(chrono::seconds(2));
   random_device rd;
   mt19937 gen(rd());
   discrete_distribution<> dist{COMMON, UNCOMMON, RARE, EPIC, LEGENDARY};
